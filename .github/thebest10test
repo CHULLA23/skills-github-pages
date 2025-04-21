@@ -1,0 +1,158 @@
+// THE 10 – Classements incontournables 2025
+
+import Head from 'next/head';
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Star, Facebook, Twitter, Linkedin } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const CATEGORIES = ['Voiture', 'Social et Buzz', 'Gaming', 'Applications Mobiles', 'Sport', 'Argent'];
+
+const TOP10 = {
+  Voiture: [
+    'Tesla Model S',
+    'Porsche Taycan',
+    'BMW i7',
+    'Mercedes EQS',
+    'Audi e-tron GT',
+    'Lucid Air',
+    'Ford Mustang Mach-E',
+    'Hyundai Ioniq 6',
+    'Kia EV6',
+    'Nissan Ariya'
+  ],
+  'Social et Buzz': [
+    'Khaby Lame',
+    'Charli D’Amelio',
+    'MrBeast',
+    'Addison Rae',
+    'Zach King',
+    'Bella Poarch',
+    'Spencer X',
+    'Dixie D’Amelio',
+    'Brent Rivera',
+    'Jojo Siwa'
+  ],
+  Gaming: [
+    'Ninja (Tyler Blevins)',
+    'xQc (Félix Lengyel)',
+    'Shroud (Michael Grzesiek)',
+    'Tfue (Turner Tenney)',
+    'Rubius',
+    'AuronPlay',
+    'Ibai Llanos',
+    'Pokimane (Imane Anys)',
+    'TimTheTatman',
+    'Syndicate (Tom Cassell)'
+  ],
+  'Applications Mobiles': [
+    'TikTok',
+    'Instagram',
+    'CapCut',
+    'Spotify',
+    'Duolingo',
+    'Notion',
+    'WhatsApp',
+    'Telegram',
+    'Snapchat',
+    'BeReal'
+  ],
+  Sport: [
+    'Football (Soccer)',
+    'Cricket',
+    'Basketball',
+    'Tennis',
+    'Athlétisme',
+    'Formule 1',
+    'Boxe',
+    'Rugby',
+    'Baseball',
+    'Golf'
+  ],
+  Argent: [
+    'ChatGPT (OpenAI)',
+    'Midjourney',
+    'Leonardo.AI',
+    'Binance',
+    'Coinbase',
+    'Revolut',
+    'N26',
+    'Elon Musk (investisseur)',
+    'Warren Buffett',
+    'ARK Invest'
+  ]
+};
+
+export default function The10Site() {
+  const [activeCategory, setActiveCategory] = useState('Voiture');
+
+  const renderCategoryContent = () => {
+    const list = TOP10[activeCategory];
+    if (list) {
+      return (
+        <div className="max-w-2xl mx-auto">
+          <h3 className="text-2xl font-bold mb-4 text-green-400">Top 10 {activeCategory}</h3>
+          <ul className="list-decimal list-inside space-y-1">
+            {list.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return <div className="text-center text-zinc-300 text-lg">Contenu à venir pour cette catégorie.</div>;
+  };
+
+  return (
+    <>
+      <Head>
+        <title>The 10 – Classements incontournables 2025</title>
+        <meta name="description" content="Découvrez The 10 – Classements incontournables 2025 : les meilleures voitures, apps mobiles, jeux vidéo, événements sportifs, et bien plus. Votez, explorez et partagez !" />
+        <meta name="keywords" content="Top 10, classements 2025, voitures, mobile, tendances, votes, sport, gaming" />
+        <meta name="author" content="The10 Team" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#16a34a" />
+      </Head>
+
+      <main className="min-h-screen bg-gradient-to-br from-green-900 via-zinc-900 to-green-800 text-white">
+        <header className="sticky top-0 bg-zinc-950/90 backdrop-blur-sm z-50 border-b border-green-800 shadow-md">
+          <nav className="flex items-center justify-between px-6 py-4 text-white">
+            <h1 className="text-xl font-bold tracking-wide">THE 10</h1>
+            <ul className="flex gap-4 md:gap-6 text-sm md:text-base">
+              {CATEGORIES.map((cat) => (
+                <li key={cat} className={`cursor-pointer hover:text-green-400 ${activeCategory === cat ? 'text-green-400 font-semibold' : ''}`} onClick={() => setActiveCategory(cat)}>
+                  {cat}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </header>
+
+        <section className="text-center py-10 px-6">
+          <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl md:text-5xl font-extrabold mb-4">Classements incontournables 2025</motion.h2>
+          <p className="text-lg text-zinc-300 max-w-2xl mx-auto">Découvrez The 10 – Classements incontournables 2025 : les meilleures voitures, apps mobiles, jeux vidéo, événements sportifs, et bien plus. Votez, explorez et partagez !</p>
+        </section>
+
+        <section className="px-4 md:px-10 py-6">
+          {renderCategoryContent()}
+        </section>
+
+        <footer className="mt-20 border-t border-zinc-700 pt-6 text-sm text-zinc-400 text-center">
+          <p>© 2025 The10. Tous droits réservés.</p>
+          <div className="flex justify-center space-x-4 mt-2">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <Facebook className="w-4 h-4 hover:text-white" />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <Twitter className="w-4 h-4 hover:text-white" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <Linkedin className="w-4 h-4 hover:text-white" />
+            </a>
+          </div>
+        </footer>
+      </main>
+    </>
+  );
+}
