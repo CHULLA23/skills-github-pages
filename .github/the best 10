@@ -1,0 +1,104 @@
+import { useState } from 'react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+// API Stripe (pour créer la session de paiement)
+import Stripe from 'stripe';
+const stripe = new Stripe('sk_test_YOUR_SECRET_KEY'); // Remplace avec ta clé secrète Stripe
+
+const CheckoutButton = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    setLoading(true);
+
+    const response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+    });
+
+    const session = await response.json();
+
+    const stripe = window.Stripe('pk_test_YOUR_PUBLIC_KEY'); // Remplace avec ta clé publique Stripe
+    const { error } = await stripe.redirectToCheckout({ sessionId: session.id });
+
+    if (error) {
+      console.error('Erreur Stripe :', error);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <button
+      onClick={handleCheckout}
+      disabled={loading}
+      className={`py-2 px-6 bg-green-600 text-white rounded-lg ${loading ? 'cursor-wait' : ''}`}
+    >
+      {loading ? 'Chargement...' : 'Payer maintenant'}
+    </button>
+  );
+};
+
+export default function Home() {
+  return (
+    <div className="container">
+      <Head>
+        <title>The 10 – Classements incontournables 2025</title>
+        <meta name="description" content="Découvrez The 10 – Classements incontournables 2025 : les meilleures voitures, apps mobiles, jeux vidéo, événements sportifs, et bien plus. Votez, explorez et partagez !" />
+        <meta name="keywords" content="Top 10, outils IA, classements 2025, technologie, voitures, mobile, tendances, votes, comparatif, sport, gaming" />
+        <meta name="author" content="The10 Team" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#16a34a" />
+      </Head>
+      
+      <main className="min-h-screen bg-gradient-to-br from-green-900 via-zinc-900 to-green-800 text-white">
+        <header className="sticky top-0 bg-zinc-950/90 backdrop-blur-sm z-50 border-b border-green-800 shadow-md">
+          <nav className="flex items-center justify-between px-6 py-4 text-white">
+            <h1 className="text-xl font-bold tracking-wide">THE 10</h1>
+          </nav>
+        </header>
+
+        <section className="text-center py-10 px-6">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4">Classements incontournables 2025</h2>
+          <p className="text-lg text-zinc-300 max-w-2xl mx-auto">Découvrez The 10 – Classements incontournables 2025 : les meilleures voitures, apps mobiles, jeux vidéo, événements sportifs, et bien plus. Votez, explorez et partagez !</p>
+          <CheckoutButton />
+        </section>
+
+        <footer className="mt-20 border-t border-zinc-700 pt-6 text-sm text-zinc-400 text-center">
+          <p>© 2025 The10. Tous droits réservés.</p>
+        </footer>
+      </main>
+    </div>
+  );
+}
+
+// API pour créer la session Stripe
+export async function createCheckoutSession(req, res) {
+  if (req.method === 'POST') {
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Subscription to The 10',
+              },
+              unit_amount: 500, // Prix en centimes (ici 5 USD)
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      });
+
+      res.status(200).json({ id: session.id });
+    } catch (error) {
+      console.error('Erreur lors de la création de la session Stripe:', error);
+      res.status(500).send('Erreur du serveur');
+    }
+  }
+}
